@@ -1,0 +1,206 @@
+######################################
+# Run Time
+######################################
+ActiveThorns = "Time"
+
+Cactus::cctk_initial_time = 1
+# LCDM: z = 302.5, a = 0.00329
+# EdS: z = 205.5, a = 0.00484
+
+Cactus::cctk_final_time   = 1.10
+Cactus::terminate         = "time"
+Time::dtfac               = 0.0006  
+# for the Hamiltonian constraint dtfac needs 
+# to be much smaller than the scale factor
+
+######################################
+# Grid
+######################################
+ActiveThorns = "CartGrid3D CoordBase Slab SymBase PeriodicCarpet SpaceMask CoordGauge"
+ActiveThorns = "Carpet CarpetLib CarpetInterp CarpetReduce CarpetSlab Boundary"
+
+Carpet::adaptive_stepsize = "yes"
+
+CoordBase::domainsize = "minmax"
+CoordBase::xmin =  -320.0
+CoordBase::ymin =  -320.0
+CoordBase::zmin =  -320.0
+CoordBase::xmax =  +320.0
+CoordBase::ymax =  +320.0
+CoordBase::zmax =  +320.0
+CoordBase::dx = 20
+CoordBase::dy = 20
+CoordBase::dz = 20
+
+CoordBase::boundary_size_x_lower     = 3
+CoordBase::boundary_size_y_lower     = 3
+CoordBase::boundary_size_z_lower     = 3
+CoordBase::boundary_size_x_upper     = 3
+CoordBase::boundary_size_y_upper     = 3
+CoordBase::boundary_size_z_upper     = 3
+
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::boundary_shiftout_y_lower = 1
+CoordBase::boundary_shiftout_z_lower = 1
+CoordBase::boundary_shiftout_x_upper = 0
+CoordBase::boundary_shiftout_y_upper = 0
+CoordBase::boundary_shiftout_z_upper = 0
+
+CartGrid3D::type = "coordbase"
+PeriodicCarpet::periodic   = "yes"
+SpaceMask::use_mask = "yes"
+
+Carpet::init_fill_timelevels     = "yes"
+Carpet::prolongation_order_time  = 2
+Carpet::poison_new_timelevels    = yes
+
+Carpet::domain_from_coordbase    = yes
+Carpet::max_refinement_levels    = 1
+driver::ghost_size               = 3
+Carpet::use_buffer_zones         = yes
+Carpet::prolongation_order_space = 5
+
+CarpetLib::poison_new_memory     = yes
+CarpetLib::max_allowed_memory_MB = 12288
+Carpet::grid_structure_filename   = "grid_structure.asc"
+Carpet::grid_coordinates_filename = "grid_coordinates.asc"
+
+#####################################
+# Space Time IC
+#####################################
+ActiveThorns = "InitBase ICPertFLRW CT_Dust"
+ActiveThorns = "ADMBase ADMMacros ADMAnalysis ADMCoupling StaticConformal"
+
+InitBase::initial_data_setup_method = "init_single_level"
+ADMBase::initial_data    = "CT_Dust"
+
+CT_Dust::my_initial_data = "ICPertFLRW"
+CT_Dust::coupling = "yes"
+
+# LCDM
+CT_Dust::Lambda = 1.0382472680261657e-07
+ICPertFLRW::ICPertFLRW_expansion = "LCDM"
+
+# EdS
+#ICPertFLRW::ICPertFLRW_expansion = "EdS"
+
+# With perturbation
+#ICPertFLRW::ICPertFLRW_Amp_x[0] = 1e-5
+#ICPertFLRW::ICPertFLRW_Amp_y[0] = 1e-5
+#ICPertFLRW::ICPertFLRW_Amp_z[0] = 1e-5
+#ICPertFLRW::ICPertFLRW_lambda_x[0] = 640.0
+#ICPertFLRW::ICPertFLRW_lambda_y[0] = 640.0
+#ICPertFLRW::ICPertFLRW_lambda_z[0] = 640.0
+
+#####################################
+# Hydrodynamics IC
+#####################################
+ActiveThorns = "TmunuBase"
+
+TmunuBase::stress_energy_storage = "yes"
+TmunuBase::stress_energy_at_RHS  = "yes"
+
+######################################
+# Evolution
+######################################
+ActiveThorns = "MoL ML_BSSN ML_BSSN_Helper AEILocalInterp GenericFD LoopControl NaNChecker"
+
+MoL::ODE_Method             = "RK4"
+MoL::MoL_Intermediate_Steps = 4
+MoL::MoL_Num_Scratch_Levels = 1
+
+ADMMacros::spatial_order = 4
+ADMBase::metric_timelevels = 3
+ADMBase::evolution_method       = "ML_BSSN"
+
+ML_BSSN::conformalMethod = 1
+# 0 : phi method, 1 : W method
+
+#-------------------------------
+#   Synchronous gauge
+#-------------------------------
+ADMBase::initial_lapse   = "one"
+ADMBase::initial_shift   = "zero"
+ADMBase::initial_dtlapse = "zero"
+ADMBase::initial_dtshift = "zero"
+
+ADMBase::lapse_timelevels = 3
+ADMBase::shift_timelevels = 3
+
+ADMBase::lapse_evolution_method = "ML_BSSN"
+ADMBase::shift_evolution_method = "ML_BSSN"
+ADMBase::dtlapse_evolution_method = "static"
+ADMBase::dtshift_evolution_method = "static"
+
+# d/dt alpha = -f alpha^n K - alphaDriver (alpha - 1)
+ML_BSSN::harmonicN       = 1.0
+ML_BSSN::harmonicF       = 0.0
+ML_BSSN::alphaDriver     = 0.0
+ML_BSSN::MinimumLapse    = 1.0e-8
+ML_BSSN::advectLapse     = 1.0
+
+# d/dt beta^i = C Xt^i - betaDriver alpha^shiftAlphaPower beta^i
+ML_BSSN::ShiftGammaCoeff = 0.0
+ML_BSSN::betaDriver      = 0.0
+ML_BSSN::shiftAlphaPower = 0.0
+ML_BSSN::advectShift     = 1.0
+ML_BSSN::evolveB         = 0.0
+
+######################################
+# Output
+######################################
+ActiveThorns = "CarpetIOBasic CarpetIOScalar CarpetIOASCII CarpetIOHDF5"
+IO::out_dir = $parfile
+IO::out_unchunked = "no"
+
+NaNChecker::check_every = 10
+NaNChecker::action_if_found = "terminate"
+NaNChecker::check_vars = "
+       ADMBase::metric
+       ADMBase::curv
+       ADMBase::lapse
+       ADMBase::shift
+       CT_Dust::rho
+       TmunuBase::eTtt
+"
+
+# print in stdout
+IOBasic::outInfo_every      = 1
+IOBasic::outInfo_reductions = "average"
+IOBasic::outInfo_vars       = "
+	ADMBase::gxx
+	ADMBase::kxx
+	ADMBase::alp
+        CT_Dust::rho
+	ML_BSSN::ML_Ham
+"
+
+# print ascii file of var reduction
+IOScalar::one_file_per_group = yes
+IOScalar::outScalar_every = 1
+IOScalar::outScalar_reductions = "average"
+IOScalar::outScalar_vars  = "
+	ADMBase::metric
+	ADMBase::curv
+        ADMBase::lapse
+        ADMBase::shift
+        ML_BSSN::ML_Ham
+        ML_BSSN::ML_Mom
+	CT_Dust::rho
+"
+
+# record the grid point values of a given plane
+IOASCII::one_file_per_group = yes
+IOASCII::out1D_every = 0
+IOASCII::out1D_vars  = ""
+
+# record box values
+IOHDF5::out_criterion = "divisor"
+IOHDF5::out_every          = 100
+IOHDF5::one_file_per_group = yes
+IOHDF5::compression_level  = 0
+IOHDF5::out_vars  = "
+        ADMBase::metric
+        ADMBase::curv
+	CT_Dust::rho
+"

@@ -1,0 +1,6 @@
+
+SCHEDULE ICPertFLRW_ICCalc IN CCTK_INITIAL AFTER ADMBase_Initial BEFORE CT_Dust_convertFromPrimitives
+{
+  LANG: Fortran
+} "Initial conditions for perturbed FLRW"
+

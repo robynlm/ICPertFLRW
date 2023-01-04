@@ -1,0 +1,110 @@
+
+#################################################
+#              Extended keywords
+#################################################
+
+shares: CT_Dust
+EXTENDS CCTK_KEYWORD my_initial_data
+{
+  "ICPertFLRW" :: "Data Initialised by ICPertFLRW thorn"
+}
+USES CCTK_REAL Lambda
+
+#################################################
+#          This Thorn's parameters
+#################################################
+
+######## Logical
+
+private:
+CCTK_KEYWORD ICPertFLRW_expansion "Choose how the scale factor, the Hubble parameter, and Omega_matter are calculated"
+{
+  "EdS"  :: "Einstein-de Sitter"
+  "LCDM" :: "Lambda CDM with only Omega_matter and Omega_lambda =/= 0"
+} "LCDM"
+
+######## Variables
+
+private:
+CCTK_REAL ICPertFLRW_z_comoving_ref "Comoving reference redshift: a_0 = 1 + z_comoving_ref"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_G "Gravitational Constant"
+{
+  *:* :: ""
+} 1
+
+restricted:
+CCTK_REAL ICPertFLRW_Omega_matter0 "Matter Density Parameter Today"
+{
+  *:* :: ""
+} 0.3147
+
+restricted:
+CCTK_REAL ICPertFLRW_c "Speed of light"
+{
+  *:* :: ""
+} 1
+
+restricted:
+CCTK_REAL ICPertFLRW_h "Dimensionless Hubble parameter"
+{
+  *:* :: ""
+} 0.6737
+
+private:
+CCTK_REAL ICPertFLRW_Amp_x[20] "Amplitude of the perturbation, max will be Amp_pertx"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_Amp_y[20] "Amplitude of the perturbation, max will be Amp_pertx"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_Amp_z[20] "Amplitude of the perturbation, max will be Amp_pertx"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_lambda_x[20] "Wavelength of the perturbation along x"
+{
+  *:* :: ""
+} 1
+
+private:
+CCTK_REAL ICPertFLRW_lambda_y[20] "Wavelength of the perturbation along y"
+{
+  *:* :: ""
+} 1
+
+private:
+CCTK_REAL ICPertFLRW_lambda_z[20] "Wavelength of the perturbation along z"
+{
+  *:* :: ""
+} 1
+
+private:
+CCTK_REAL ICPertFLRW_phi_x[20] "Wavelength shift along x"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_phi_y[20] "Wavelength shift along y"
+{
+  *:* :: ""
+} 0
+
+private:
+CCTK_REAL ICPertFLRW_phi_z[20] "Wavelength shift along z"
+{
+  *:* :: ""
+} 0

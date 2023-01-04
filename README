@@ -1,0 +1,204 @@
+Cactus Code Thorn ICPertFLRW
+Author(s)    : Robyn L. Munoz
+Maintainer(s): Robyn L. Munoz
+Licence      : GNU General Public License
+--------------------------------------------------------------------------
+
+Purpose of this Thorn
+=====================
+This thorn provides as initial conditions an FLRW metric perturbed with the comoving curvature perturbation Rc in the synchronous comoving gauge. Rc is defined as a sum of sinusoidals (20 in each x, y, and z direction) whose amplitude, wavelength, and phase shift are all parameters in param.ccl. 
+
+While the metric and extrinsic curvature only have first order scalar perturbations, the energy density is computed exactly in full from the Hamiltonian constraint, hence vector and tensor perturbations are initially present at higher order. These are then passed to the CT_Dust thorn to be evolved.
+
+Copyright
+=========
+Copyright (C) 2022  Robyn L. Munoz
+
+This thorn is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This thorn is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this thorn.  If not, see <http://www.gnu.org/licenses/>.
+
+You may contact the author at : robyn.munoz@yahoo.fr
+
+Publications
+============
+Article where these initial conditions are described:
+@article{M.Bruni_etal_2014_Mar,
+    title     = {Non-Gaussian initial conditions in $\Lambda$CDM: Newtonian, relativistic, and primordial contributions},
+    author    = {Bruni, M. and Hidalgo, J. C. and Meures, N. and Wands, D.},
+    journal   = {The Astrophysical Journal},
+    publisher = {{IOP} Publishing},
+    volume    = {785},
+    number    = {1},
+    pages     = {2},
+    year      = {2014},
+    month     = {Mar},
+    doi       = {10.1088/0004-637X/785/1/2},
+    archivePrefix = {arXiv},
+    eprint    = {1307.1478}}
+
+Article where these initial conditions are further decribed and this thorn is developped and tested:
+@article{Coming soon!}
+
+How to implement this thorn into Einstein Toolkit:
+==================================================
+===== 1) Have a working version of Einstein Toolkit
+# Follow the instructions here
+# https://github.com/nds-org/jupyter-et/blob/master/tutorial-server/notebooks/CactusTutorial.ipynb
+# Don't forget to try to run helloworld
+# I added 'module load mpi/openmpi-x86_64' to my .bashrc
+
+#If you're doing this on the Sciama HPC
+>> cd pathtocactus
+>> ./simfactory/bin/sim setup-silent --machine=sciama
+>> ./simfactory/bin/sim build --machine=sciama --thornlist=thornlists/ET.th
+
+#The paths of the HPC config files are:
+# pathtocactus/simfactory/mdb/machines/sciama.ini
+# pathtocactus/simfactory/mdb/optionlists/sciama.cfg
+# pathtocactus/simfactory/mdb/runscripts/sciama.run
+# pathtocactus/simfactory/mdb/submitscripts/sciama.sub
+
+------ Debugging ------
+# I'm doing this on CentOS 7 and found that I need to run the commands below instead
+>> sudo yum install -y epel-release
+>> sudo yum install -y libjpeg-turbo-devel gcc git lapack-devel make subversion gcc-c++ which python3 python3-pip papi-devel hwloc-devel openmpi-devel openssl-devel libtool-ltdl-devel numactl-devel gcc-gfortran fftw-devel patch gsl-devel perl
+
+# I got the error:
+/usr/bin/ld: cannot find -lgfortran
+collect2: error: ld returned 1 exit status
+# So, following the advice on this website I created a link
+# https://stackoverflow.com/questions/16710047/usr-bin-ld-cannot-find-lnameofthelibrary
+>> sudo ln -s libgfortran.so.3.0.0 libgfortran.so
+# I tried libgfortran.so.4.0.0 and it worked but in compilation I got warnings that it should be version 3
+
+# Then I got the error:
+/home/robynm/simulations/helloworld/SIMFACTORY/exe/cactus_sim: /lib64/libstdc++.so.6: version `CXXABI_1.3.8' not found (required by /home/robynm/simulations/helloworld/SIMFACTORY/exe/cactus_sim)
+# People online advised me to do
+>> export LD_LIBRARY_PATH="/usr/local/lib64/:$LD_LIBRARY_PATH"
+# add it to the .bashrc to keep it there
+
+===== 2) Make sure CT_Dust is included
+# Check Cactus/arrangements/CTThorns and in Cactus/thornlists/einsteintoolkit.th
+# If it's not included you can get it here:
+>> git clone https://bitbucket.org/eloisa/ctthorns.git
+# Add link to arrangements
+>> ln -s ~/codes/ctthorns/CT_Dust/ ~/codes/ET/code/2022_05/Cactus/arrangements/CTThorns/
+# Add to Cactus/thornlists/einsteintoolkit.th, in CTThorns section
+CTThorns/CT_Dust
+
+===== 3) Modify CT_Dust
+# In ctthorns/CT_Dust/param.cl change 
+private:
+CCTK_KEYWORD my_initial_data "my_initial_data"
+# to:
+restricted:
+CCTK_KEYWORD my_initial_data "my_initial_data"
+
+===== 4) Compile Einstein Toolkit
+# in Cactus directory
+>>./simfactory/bin/sim build -j2 --thornlist=thornlists/einsteintoolkit.th
+# Or
+>> ./simfactory/bin/sim build --machine=sciama --thornlist=thornlists/ET.th
+
+------ Debugging ------
+# I'm getting the error
+CST error in /home/robynm/codes/ET/code/2022_05/Cactus/arrangements/CTThorns/CT_Dust/schedule.ccl (at 139)
+  -> SYNTAX ERROR
+     HINT: ERROR ON LINE 139:
+    READS: CT_Dust::u2(Everywhere)
+    READS: CT_Dust::u3(Everywhere)
+    WRITES: ML_BSSN::At11(BoundaryWithGhosts)
+                                  ^
+                                  | here
+# In CT_Dust/schedule.ccl I changed all the 'BoundaryWithGhosts' to 'Boundary'
+
+===== 5) Include ICPertFLRW in Einstein Toolkit
+# link
+>> ln -s path_to_thorn/ICPertFLRW path_to_Cactus/Cactus/arrangements/EinsteinInitialData/
+# add to Cactus/thornlists/einsteintoolkit.th, in EinsteinInitialData section
+EinsteinInitialData/ICPertFLRW
+
+===== 6) Compile Einstein Toolkit
+
+===== 7) Run test.par to check if it works
+>>./simfactory/bin/sim create-submit test --parfile=path_to_file/test.par --procs=1 --num-threads=1
+# Or
+>>./simfactory/bin/sim create-submit test --machine=sciama --parfile=path_to_file/test.par --procs=1 --num-threads=1
+
+# Results in simulations/test/output-0000/test.out
+# without perturbation
+----------------------------------------------------------------------------------------------
+Iteration      Time | ADMBASE::gxx | ADMBASE::kxx | ADMBASE::alp | CT_DUST::rho |   ML_BSSN::H
+                    |      average |      average |      average |      average |      average
+----------------------------------------------------------------------------------------------
+        0     1.000 |    0.0000109 |   -0.0000072 |    1.0000000 |    0.0530516 | -4.440892e-16
+        1     1.012 |    0.0000110 |   -0.0000073 |    1.0000000 |    0.0518010 | -2.979217e-11
+        2     1.024 |    0.0000112 |   -0.0000073 |    1.0000000 |    0.0505940 | -5.674172e-11
+        3     1.036 |    0.0000114 |   -0.0000073 |    1.0000000 |    0.0494287 | -8.111822e-11
+        4     1.048 |    0.0000116 |   -0.0000073 |    1.0000000 |    0.0483032 | -1.031570e-10
+        5     1.060 |    0.0000117 |   -0.0000074 |    1.0000000 |    0.0472158 | -1.230851e-10
+        6     1.072 |    0.0000119 |   -0.0000074 |    1.0000000 |    0.0461646 | -1.410951e-10
+        7     1.084 |    0.0000121 |   -0.0000074 |    1.0000000 |    0.0451482 | -1.573568e-10
+        8     1.096 |    0.0000123 |   -0.0000075 |    1.0000000 |    0.0441650 | -1.720371e-10
+        9     1.108 |    0.0000124 |   -0.0000075 |    1.0000000 |    0.0432135 | -1.852745e-10
+
+# with perturbation now uncommented
+----------------------------------------------------------------------------------------------
+Iteration      Time | ADMBASE::gxx | ADMBASE::kxx | ADMBASE::alp | CT_DUST::rho |   ML_BSSN::H
+                    |      average |      average |      average |      average |      average
+----------------------------------------------------------------------------------------------
+        0     1.000 |    0.0000109 |   -0.0000072 |    1.0000000 |    0.0530516 | -2.116072e-11
+        1     1.012 |    0.0000110 |   -0.0000073 |    1.0000000 |    0.0518010 | -5.090685e-11
+        2     1.024 |    0.0000112 |   -0.0000073 |    1.0000000 |    0.0505940 | -7.783028e-11
+        3     1.036 |    0.0000114 |   -0.0000073 |    1.0000000 |    0.0494287 | -1.021248e-10
+        4     1.048 |    0.0000116 |   -0.0000073 |    1.0000000 |    0.0483032 | -1.241378e-10
+        5     1.060 |    0.0000117 |   -0.0000074 |    1.0000000 |    0.0472158 | -1.440006e-10
+        6     1.072 |    0.0000119 |   -0.0000074 |    1.0000000 |    0.0461646 | -1.620092e-10
+        7     1.084 |    0.0000121 |   -0.0000074 |    1.0000000 |    0.0451482 | -1.782326e-10
+        8     1.096 |    0.0000123 |   -0.0000075 |    1.0000000 |    0.0441650 | -1.928403e-10
+        9     1.108 |    0.0000124 |   -0.0000075 |    1.0000000 |    0.0432135 | -2.061015e-10
+
+===== 8) Be happy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
