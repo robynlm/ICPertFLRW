@@ -17,11 +17,11 @@ USES CCTK_REAL Lambda
 ######## Logical
 
 private:
-CCTK_KEYWORD ICPertFLRW_expansion "Choose how the scale factor, the Hubble parameter, and Omega_matter are calculated"
+CCTK_KEYWORD ICPertFLRW_Lambda "Choose how the scale factor, the Hubble parameter, and Omega_matter are calculated"
 {
-  "EdS"  :: "Einstein-de Sitter"
-  "LCDM" :: "Lambda CDM with only Omega_matter and Omega_lambda =/= 0"
-} "LCDM"
+  "no"  :: "No Cosmological constant"
+  "yes" :: "Cosmological constant present"
+} "yes"
 
 ######## Variables
 
@@ -56,19 +56,19 @@ CCTK_REAL ICPertFLRW_h "Dimensionless Hubble parameter"
 } 0.6737
 
 private:
-CCTK_REAL ICPertFLRW_Amp_x[20] "Amplitude of the perturbation, max will be Amp_pertx"
+CCTK_REAL ICPertFLRW_Amp_x[20] "Amplitude of the perturbation, along x"
 {
   *:* :: ""
 } 0
 
 private:
-CCTK_REAL ICPertFLRW_Amp_y[20] "Amplitude of the perturbation, max will be Amp_pertx"
+CCTK_REAL ICPertFLRW_Amp_y[20] "Amplitude of the perturbation, along y"
 {
   *:* :: ""
 } 0
 
 private:
-CCTK_REAL ICPertFLRW_Amp_z[20] "Amplitude of the perturbation, max will be Amp_pertx"
+CCTK_REAL ICPertFLRW_Amp_z[20] "Amplitude of the perturbation, along z"
 {
   *:* :: ""
 } 0

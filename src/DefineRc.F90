@@ -17,7 +17,7 @@ module DefineRc
                                      dxdxdzdzRc, dxdydydyRc, dxdydydzRc, dxdydzdzRc, dxdzdzdzRc, &
                                      dydydydyRc, dydydydzRc, dydydzdzRc, dydzdzdzRc, dzdzdzdzRc )
       DECLARE_CCTK_PARAMETERS
-      DECLARE_CCTK_FUNCTIONS     
+      DECLARE_CCTK_FUNCTIONS
       ! Input
       CCTK_REAL :: x, y, z
 
@@ -80,7 +80,7 @@ module DefineRc
       dydzdzdzRc = 0._dp
       dzdzdzdzRc = 0._dp
 
-      do m = 1, 20
+      do m = 1, 20        
         kx = twopi / ICPertFLRW_lambda_x(m)
         ky = twopi / ICPertFLRW_lambda_y(m)
         kz = twopi / ICPertFLRW_lambda_z(m)
@@ -102,19 +102,19 @@ module DefineRc
         dzRc = dzRc + ICPertFLRW_Amp_z(m) * kz * cosz
 
         ! Double derivatives
-        dxdxRc = dxdxRc - ICPertFLRW_Amp_x(m) * kx**2._dp * sinx
-        dydyRc = dydyRc - ICPertFLRW_Amp_y(m) * ky**2._dp * siny
-        dzdzRc = dzdzRc - ICPertFLRW_Amp_z(m) * kz**2._dp * sinz
+        dxdxRc = dxdxRc - ICPertFLRW_Amp_x(m) * (kx**2._dp) * sinx
+        dydyRc = dydyRc - ICPertFLRW_Amp_y(m) * (ky**2._dp) * siny
+        dzdzRc = dzdzRc - ICPertFLRW_Amp_z(m) * (kz**2._dp) * sinz
 
         ! Triple derivatives
-        dxdxdxRc = dxdxdxRc - ICPertFLRW_Amp_x(m) * kx**3._dp * cosx
-        dydydyRc = dydydyRc - ICPertFLRW_Amp_y(m) * ky**3._dp * cosy
-        dzdzdzRc = dzdzdzRc - ICPertFLRW_Amp_z(m) * kz**3._dp * cosz
+        dxdxdxRc = dxdxdxRc - ICPertFLRW_Amp_x(m) * (kx**3._dp) * cosx
+        dydydyRc = dydydyRc - ICPertFLRW_Amp_y(m) * (ky**3._dp) * cosy
+        dzdzdzRc = dzdzdzRc - ICPertFLRW_Amp_z(m) * (kz**3._dp) * cosz
 
         ! Quadruple derivatives
-        dxdxdxdxRc = dxdxdxdxRc + ICPertFLRW_Amp_x(m) * kx**4._dp * sinx
-        dydydydyRc = dydydydyRc + ICPertFLRW_Amp_y(m) * ky**4._dp * siny
-        dzdzdzdzRc = dzdzdzdzRc + ICPertFLRW_Amp_z(m) * kz**4._dp * sinz
+        dxdxdxdxRc = dxdxdxdxRc + ICPertFLRW_Amp_x(m) * (kx**4._dp) * sinx
+        dydydydyRc = dydydydyRc + ICPertFLRW_Amp_y(m) * (ky**4._dp) * siny
+        dzdzdzdzRc = dzdzdzdzRc + ICPertFLRW_Amp_z(m) * (kz**4._dp) * sinz
       enddo
   end subroutine ICPertFLRW_DefineRc
 end module DefineRc

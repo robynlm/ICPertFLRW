@@ -67,31 +67,30 @@ subroutine ICPertFLRW_ICCalc (CCTK_ARGUMENTS)
 
   CCTK_REAL :: kxxu, kxyu, kxzu, kyyu, kyzu, kzzu
   CCTK_REAL :: K_Loc, KijKji
+  
+  logical :: want_pflrw, want_Lambda
 
-  logical :: want_pflrw, want_EdS
-
-  want_pflrw   = CCTK_EQUALS (my_initial_data, "ICPertFLRW")
+  want_pflrw = CCTK_EQUALS (my_initial_data, "ICPertFLRW")
   if (want_pflrw) then
-    want_EdS     = CCTK_EQUALS (ICPertFLRW_expansion, "EdS")
-
+    want_Lambda = CCTK_EQUALS (ICPertFLRW_Lambda, "yes")
     H0 = ICPertFLRW_h * ICPertFLRW_c / 2997.9_dp ! Units are Mpc
     a0 = 1._dp + ICPertFLRW_z_comoving_ref
     t0_EdS = 2._dp / ( 3._dp * H0 )
     Omega_lambda0 = 1._dp - ICPertFLRW_Omega_matter0
 
     t = cctk_time
-    if (want_EdS) then
-      aa = a0 * ( t / t0_EdS )**(2._dp/3._dp)
-      Hprop = 2._dp / ( 3._dp * t )
-      Omega_matter = 1.0
-      Lambda = 0._dp
-    else
+    if (want_Lambda) then
       aa = a0 * ( ICPertFLRW_Omega_matter0 / Omega_lambda0 )**(1._dp/3._dp) &
            * sinh( sqrt(Omega_lambda0) * t / t0_EdS )**(2._dp/3._dp)
       Hprop = H0 * sqrt( ICPertFLRW_Omega_matter0 * ( aa / a0 )**(-3._dp) + Omega_lambda0 )
       Omega_matter = ICPertFLRW_Omega_matter0 / ( ICPertFLRW_Omega_matter0 &
                                                  + Omega_lambda0 * ( aa / a0 )**3._dp )
       Lambda = 3._dp * Omega_lambda0 * H0**2._dp / ICPertFLRW_c**2._dp
+    else
+      aa = a0 * ( t / t0_EdS )**(2._dp/3._dp)
+      Hprop = 2._dp / ( 3._dp * t )
+      Omega_matter = 1.0
+      Lambda = 0._dp
     endif
 
     a2 = aa**2._dp
@@ -99,9 +98,9 @@ subroutine ICPertFLRW_ICCalc (CCTK_ARGUMENTS)
     mta2 = - ta2
 
     f_Loc = Omega_matter**(6._dp/11._dp)
-    F     = f_Loc + (3._dp/2._dp) * Omega_matter
-    iFH   = 1._dp / ( F * Hprop )
-    iFH2  = 1._dp / ( F * Hprop**2._dp )
+    F = f_Loc + (3._dp/2._dp) * Omega_matter
+    iFH = 1._dp / ( F * Hprop )
+    iFH2 = 1._dp / ( F * Hprop**2._dp )
     m2iFH2 = - 2._dp * iFH2
 
     kappa = 8._dp * pi * ICPertFLRW_G 

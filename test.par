@@ -9,7 +9,7 @@ Cactus::cctk_initial_time = 1
 
 Cactus::cctk_final_time   = 1.10
 Cactus::terminate         = "time"
-Time::dtfac               = 0.0006  
+Time::dtfac               = 0.0006
 # for the Hamiltonian constraint dtfac needs 
 # to be much smaller than the scale factor
 
@@ -79,10 +79,7 @@ CT_Dust::coupling = "yes"
 
 # LCDM
 CT_Dust::Lambda = 1.0382472680261657e-07
-ICPertFLRW::ICPertFLRW_expansion = "LCDM"
-
-# EdS
-#ICPertFLRW::ICPertFLRW_expansion = "EdS"
+ICPertFLRW::ICPertFLRW_Lambda = "yes"
 
 # With perturbation
 #ICPertFLRW::ICPertFLRW_Amp_x[0] = 1e-5
