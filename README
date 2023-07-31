@@ -36,18 +36,29 @@ Article where these initial conditions are described:
     title     = {Non-Gaussian initial conditions in $\Lambda$CDM: Newtonian, relativistic, and primordial contributions},
     author    = {Bruni, M. and Hidalgo, J. C. and Meures, N. and Wands, D.},
     journal   = {The Astrophysical Journal},
-    publisher = {{IOP} Publishing},
     volume    = {785},
     number    = {1},
     pages     = {2},
     year      = {2014},
-    month     = {Mar},
+    month     = {3},
     doi       = {10.1088/0004-637X/785/1/2},
     archivePrefix = {arXiv},
-    eprint    = {1307.1478}}
+    eprint    = {astro-ph/1307.1478}}
 
 Article where these initial conditions are further decribed and this thorn is developped and tested:
-@article{Coming soon!}
+@article{R.L.Munoz_M.Bruni_2023,
+    title     = {Structure formation and quasispherical collapse from initial curvature perturbations with numerical relativity simulations},
+    author    = {Munoz, R. L. and Bruni, M.},
+    journal   = {Physical Review D},
+    volume    = {107},
+    number    = {12},
+    pages     = {123536},
+    numpages  = {26},
+    year      = {2023},
+    month     = {6},
+    doi       = {10.1103/PhysRevD.107.123536},
+    archivePrefix = {arXiv},
+    eprint    = {astro-ph/2302.09033}}
 
 How to implement this thorn into Einstein Toolkit:
 ==================================================
