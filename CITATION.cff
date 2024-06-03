@@ -1,0 +1,29 @@
+
+cff-version: 1.2.0
+title: ICPERTFLRW
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: 'Robyn '
+    family-names: Munoz
+    email: robyn.munoz@yahoo.fr
+    orcid: 'https://orcid.org/0000-0003-3345-8520'
+    affiliation: University of Sussex
+identifiers:
+  - type: doi
+    value: 10.1103/PhysRevD.107.123536
+  - type: other
+    value: 'arXiv: 2302.09033 [astro-ph.CO]'
+repository-code: 'https://github.com/robynlm/ICPertFLRW'
+abstract: >-
+  This thorn provides initial data to be evolved with Einstein Toolkit. As initial conditions, these are of an FLRW metric perturbed with the comoving curvature perturbation Rc in the synchronous comoving gauge. Rc is defined as a sum of sinusoidals (20 in each x, y, and z direction) whose amplitude, wavelength, and phase shift are all parameters in param.ccl. While the metric and extrinsic curvature only have first order scalar perturbations, the energy density is computed exactly in full from the Hamiltonian constraint, hence vector and tensor perturbations are initially present at higher order. These are then passed to the CT_Dust thorn to be evolved.
+keywords:
+  - Initial conditions
+  - Initial data
+  - Einstein Toolkit
+  - Cosmology
+  - Comoving curvature perturbation
+license: GPL-3.0-or-later
+date-released: '2023-01-04'
